@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Alamofire
 import SwiftyJSON
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,7 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        var shouldLaunch:Bool = false
+        
+        let realm = try! Realm()
+        try! realm.write {
+            realm.deleteAll()
+        }
         
         Alamofire.request("http://www.storage42.com/contacts.json").responseJSON { (response) in
             
@@ -27,24 +34,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 var result:[Contact] = []
                 
-                var contacts = jsonDatas[APIResult.ContactsKey]
-                
+                let contacts = jsonDatas[APIResult.ContactsKey].arrayValue
+
                 for c in contacts {
-                    let new:Contact = Contact(dict: c)
+                    let new:Contact = Contact(json: c)
+                    result.append(new)
                 }
                 
-//                if (jsonDatas.count > 0) {
-//                    result = jsonDatas[1].arrayObject as! [String]
-//                }
-//                result.insert(string, at: 0)
-                
-//                completion(result)
+                DispatchQueue.main.async {
+                    try! realm.write() {
+                        realm.add(result)
+                        shouldLaunch = true
+                    }
+                }
             }
         }
-        
-//        "http://www.storage42.com/contacts.json"
-        
-        return false
+        return shouldLaunch
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

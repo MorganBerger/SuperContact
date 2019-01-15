@@ -32,7 +32,7 @@ struct APIResult {
     static let CellKey = "cell"
     static let SSNKey = "SSN"
     
-    static let PictureKey = "email"
+    static let PictureKey = "picture"
         static let LargePictureKey = "small"
         static let MediumPictureKey = "medium"
         static let ThumbnailPictureKey = "thumbnail"
