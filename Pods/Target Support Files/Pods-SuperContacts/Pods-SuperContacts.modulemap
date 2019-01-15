@@ -1,0 +1,6 @@
+framework module Pods_SuperContacts {
+  umbrella header "Pods-SuperContacts-umbrella.h"
+
+  export *
+  module * { export * }
+}
